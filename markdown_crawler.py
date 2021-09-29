@@ -15,8 +15,10 @@ from contrib.mson import MSONRenderer
 import sys
 
 #walk_dir = sys.argv[1]
-walk_dir = '/home/steffen/PlayGround/markdown_crawler'
+walk_dir = '..'
+#walk_dir = '/home/steffen/PlayGround/markdown_crawler'
 
+exclude_dirs=['mistletoe']
 
 # If your current working directory may change during script execution, it's recommended to
 # immediately convert program arguments to an absolute path. Then the variable root below will
@@ -45,6 +47,8 @@ class Crawler:
 
 	def collect_objs_by_name(self, md_objects):
 		for file_path,file_obj in md_objects.items():
+			if not isinstance(file_obj, list) and not 'name' in file_obj:
+				continue
 			for obj in file_obj:
 				obj_name_lower=obj['name'].lower()
 				if obj_name_lower in self.objs:
@@ -156,16 +160,23 @@ class Crawler:
 		md_objects={}
 		for walk_dir in walk_dirs:
 			for root, subdirs, files in os.walk(walk_dir):
-				for subdir in subdirs:
-					pass
-				for filename in files:
-					if not filename[-3:]=='.md':
-						continue
-					file_path = os.path.join(root, filename)
-					with open(file_path, 'r') as fin:
-						with MSONRenderer() as renderer:
-							rendered = renderer.render(Document(fin))
-							md_objects[file_path]=rendered
+				for ext_dir_name in exclude_dirs:
+					print('exclude',ext_dir_name, root)
+					if ext_dir_name in root:
+						print('abbruch')
+						break
+				else: # crazy python: you can have an 'else' as end of the previous for loop!
+					for subdir in subdirs:
+						pass
+					for filename in files:
+						if not filename[-3:]=='.md':
+							continue
+						file_path = os.path.join(root, filename)
+						with open(file_path, 'r') as fin:
+							print('file_path',file_path)
+							with MSONRenderer() as renderer:
+								rendered = renderer.render(Document(fin))
+								md_objects[file_path]=rendered
 		self.remove_scrap(md_objects)
 		self.collect_objs_by_name(md_objects)
 		self.copy_parents()
