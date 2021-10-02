@@ -1,0 +1,56 @@
+# Markdown Demo file containing DBC Can Bus data
+
+used as reference: https://www.csselectronics.com/pages/can-dbc-file-database-intro
+
+
+- name : myModule
+- parent : candb_par
+- candb
+    - node_name : PCM
+    - messages : 
+        - 2364540158
+            - name: EEC1
+            - length : 8
+            - signals 
+                - EngineSpeed
+                    - bitstart : 24
+                    - bitlength : 16
+                    - endian : intel unsigned
+                    - scale: 0.125
+                    - offset : 0
+                    - min : 0
+                    - max : 8031.875
+                    - unit : rpm
+                - EngineSpeed2
+                    - bitstart : 24
+                    - bitlength : 16
+                    - endian : intel unsigned
+                    - scale: 0.125
+                    - offset : 0
+                    - min : 0
+                    - max : 8031.875
+                    - unit : rpm
+        - 2364540159
+            - name: EEC2
+            - length : 8
+            - signals 
+                - item :
+                    - name : EngineSpeed3
+                    - bitstart : 24
+                    - bitlength : 16
+                    - endian : intel unsigned
+                    - scale: 0.125
+                    - offset : 0
+                    - min : 0
+                    - max : 8031.875
+                    - unit : rpm
+                - item :
+                    - name : EngineSpeed4
+                    - bitstart : 24
+                    - bitlength : 16
+                    - endian : intel unsigned
+                    - scale: 0.125
+                    - offset : 0
+                    - min : 0
+                    - max : 8031.875
+                    - unit : rpm

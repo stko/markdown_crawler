@@ -15,14 +15,19 @@ from contrib.mson import MSONRenderer
 import sys
 
 #walk_dir = sys.argv[1]
-walk_dir = '/home/steffen/PlayGround/markdown_crawler'
-
+walk_dir = '/home/steffen/Desktop/workcopies/markdown_crawler'
 
 # If your current working directory may change during script execution, it's recommended to
 # immediately convert program arguments to an absolute path. Then the variable root below will
 # be an absolute path as well. Example:
-walk_dir = os.path.abspath(walk_dir)
+walk_dir = [
+	os.path.abspath('/home/steffen/Desktop/workcopies/markdown_crawler/test/samples/candb.md'),
+	os.path.abspath('/home/steffen/Desktop/workcopies/markdown_crawler/test/samples/candb_par.md'),
+	os.path.abspath('/home/steffen/Desktop/workcopies/markdown_crawler/test/samples/requirements.md'),
+	os.path.abspath('/home/steffen/Desktop/workcopies/markdown_crawler/test/samples/requirements_par.md'),
+]
 
+print(walk_dir)
 
 class Crawler:
 
@@ -47,9 +52,6 @@ class Crawler:
 		for file_path,file_obj in md_objects.items():
 			for obj in file_obj:
 				obj_name_lower=obj['name'].lower()
-				if obj_name_lower in self.objs:
-					print('Error: object {0} in {1} is also already defined in {2}'.format(obj_name_lower, file_path, self.objs[obj_name_lower]['file_path']))
-					continue
 				parents=[]
 				if not 'parent' in obj:
 					parent_solved=True
@@ -63,7 +65,14 @@ class Crawler:
 					else:
 						parent_solved=True
 				parents=list(map(lambda x: x.lower(), parents))
-				self.objs[obj_name_lower]={'file_path':file_path,'obj':obj,'parent_solved':parent_solved, 'parents':parents}
+				if obj_name_lower in self.objs: # the object is already descripted in another file
+					other_objs=self.objs[obj_name_lower]
+					other_objs['file_path'].append(file_path)
+					self.inject_properties(obj,other_objs['obj'],file_path,other_objs['file_path'][0])
+					other_objs['parent_solved'] = other_objs['parent_solved'] and parent_solved
+					other_objs['parents'] += parents
+				else:
+					self.objs[obj_name_lower]={'file_path':[file_path],'obj':obj,'parent_solved':parent_solved, 'parents':parents}
 
 	def inject_properties(self, source, target, source_file_path, target_file_path):
 		'''
@@ -141,12 +150,17 @@ class Crawler:
 					something_has_changed = True # allow another loop
 					for parent in obj_header['parents']:
 						obj_header['parent_solved']=True
-						print(f'fill {obj_name} with {parent} ')
-						self.inject_properties(self.objs[parent]['obj'],obj_header['obj'],self.objs[parent]['file_path'],obj_header['file_path'])
+						try:
+							self.inject_properties(self.objs[parent]['obj'],obj_header['obj'],self.objs[parent]['file_path'],obj_header['file_path'])
+							print(f'fill {obj_name} with {parent} ')
+						except KeyError as e:
+							print(f'Error: {parent} is refenced in {obj_name}, but does not exist')
 
-	
-
-
+	def import_file(self, file_path):
+		with open(file_path, 'r') as fin:
+			with MSONRenderer() as renderer:
+				rendered = renderer.render(Document(fin))
+				return rendered
 
 	def crawl(self, dirs):
 		if isinstance(dirs,str):
@@ -155,6 +169,8 @@ class Crawler:
 			walk_dirs=dirs
 		md_objects={}
 		for walk_dir in walk_dirs:
+			if os.path.isfile(walk_dir):
+				md_objects[walk_dir]=self.import_file(walk_dir)
 			for root, subdirs, files in os.walk(walk_dir):
 				for subdir in subdirs:
 					pass
@@ -162,10 +178,7 @@ class Crawler:
 					if not filename[-3:]=='.md':
 						continue
 					file_path = os.path.join(root, filename)
-					with open(file_path, 'r') as fin:
-						with MSONRenderer() as renderer:
-							rendered = renderer.render(Document(fin))
-							md_objects[file_path]=rendered
+					md_objects[file_path]=self.import_file(file_path)
 		self.remove_scrap(md_objects)
 		self.collect_objs_by_name(md_objects)
 		self.copy_parents()
@@ -175,4 +188,5 @@ if __name__=='__main__':
 	crawler=Crawler()
 	md_objects=crawler.crawl(walk_dir)
 
-	print(md_objects)
+	#print(md_objects)
+	print(crawler.objs)
