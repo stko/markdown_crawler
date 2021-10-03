@@ -172,18 +172,19 @@ becomes
         {
             "name" : myModule" ,
             "requirements" : [
-            {
-                "text" : "Lorem ipsum dolor sit amet, consetetur sadipscing elitr,\n
-                sed diam nonumy eirmod tempor invidunt ut labore et dolore\n
-                magna aliquyam erat, sed diam voluptua."] ,
-                "sev" : "5"
-            },
-            {
-                "text" : "At vero eos et accusam et\n
-                justo duo dolores et ea rebum. Stet clita kasd gubergren,\n
-                no sea takimata sanctus est Lorem ipsum dolor sit amet. "] ,
-                "sev" : "6"
-            }
+                {
+                    "text" : "Lorem ipsum dolor sit amet, consetetur sadipscing elitr,\n
+                    sed diam nonumy eirmod tempor invidunt ut labore et dolore\n
+                    magna aliquyam erat, sed diam voluptua."] ,
+                    "sev" : "5"
+                },
+                {
+                    "text" : "At vero eos et accusam et\n
+                    justo duo dolores et ea rebum. Stet clita kasd gubergren,\n
+                    no sea takimata sanctus est Lorem ipsum dolor sit amet. "] ,
+                    "sev" : "6"
+                }
+            ]
         }
     }
 
@@ -195,8 +196,8 @@ Defining object properties as list is one way, but expecially in such cases with
 
 | key A   | key B   | key C   |
 |---------|---------|---------|
-| val 1 A | val 1 A | val 1 A | 
-| val 2 A | val 2 A | val 2 A | 
+| val 1 A | val 1 B | val 1 C | 
+| val 2 A | val 2 B | val 2 C | 
 
 
 MDC takes all header fields as key identiers and creates an array of objects with the given value for each key
@@ -218,20 +219,18 @@ But in opposite here the left- top-most -cell is empty:
 
 |          | key B   | key C   |
 |----------|---------|---------|
-| key 1    | val 1 A | val 1 A | 
-| key 2    | val 2 A | val 2 A | 
+| key 1    | val 1 B | val 1 C | 
+| key 2    | val 2 B | val 2 C | 
 
 
 In this case MDC takes all header fields as key identiers and creates an hash of objects, using the first column as object key identifier for the hash
 
     {
         'key 1' : {
-            'key A' : 'val 1 A',
             'key B' : 'val 1 B',
             'key C' : 'val 1 C',
         },
         'key 2' : {
-            'key A' : 'val 2 A',
             'key B' : 'val 2 B',
             'key C' : 'val 2 C',
         }
