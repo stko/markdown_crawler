@@ -15,7 +15,10 @@ from contrib.mson import MSONRenderer
 import sys
 
 #walk_dir = sys.argv[1]
-walk_dir = '/home/steffen/Desktop/workcopies/markdown_crawler'
+walk_dir = '..'
+#walk_dir = '/home/steffen/PlayGround/markdown_crawler'
+
+exclude_dirs=['mistletoe']
 
 # If your current working directory may change during script execution, it's recommended to
 # immediately convert program arguments to an absolute path. Then the variable root below will
@@ -50,6 +53,8 @@ class Crawler:
 
 	def collect_objs_by_name(self, md_objects):
 		for file_path,file_obj in md_objects.items():
+			if not isinstance(file_obj, list) and not 'name' in file_obj:
+				continue
 			for obj in file_obj:
 				obj_name_lower=obj['name'].lower()
 				parents=[]
