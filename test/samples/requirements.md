@@ -8,12 +8,13 @@ used as reference: https://www.csselectronics.com/pages/can-dbc-file-database-in
 - requirements :
     - item 
         - text
-            dsddd
-            sd
+            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+            sed diam nonumy eirmod tempor invidunt ut labore et dolore
+            magna aliquyam erat, sed diam voluptua. 
         - sev: 5
     - item 
         - text
-            dsddd
-            sd
-            sdsdd
+            At vero eos et accusam et
+            justo duo dolores et ea rebum. Stet clita kasd gubergren,
+            no sea takimata sanctus est Lorem ipsum dolor sit amet. 
         - sev: 6
