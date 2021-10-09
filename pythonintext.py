@@ -149,11 +149,7 @@ The lineMapping dictionary maps the line numbers in the destination file
 
 import os,string,re,sys
 
-# Find the best implementation available on this platform
-try:
-    from cStringIO import StringIO
-except:
-    from io import StringIO
+from io import StringIO
 
 startIndent=re.compile("<\s*indent\s*>",re.IGNORECASE)
 endIndent=re.compile("<\s*/indent\s*>",re.IGNORECASE)
@@ -171,16 +167,19 @@ class PIH:
 
     endTag={"<%":"%>","<%=":"%>","<%_":"%>","<%%":"%%>"}
 
-    def __init__(self,fileName=None):
-        self.fileName=fileName
+    def __init__(self,source=None):
         self.defaultEncoding="unicode"
-        if fileName:
-            fileObject=open(fileName)
-            self.parse(fileObject)
+        if not source:
+            return
+        if os.path.exists(source):
+           with open(source, 'r') as fin:
+               source=fin.readlines()
+        else:
+            source=source.split('\n')
+        self.parse(source)
         
-    def parse(self,fileObject):
-        """Parses the PIH code in the file object open for reading"""   
-        sourceCode=fileObject.readlines()
+    def parse(self,sourceCode):
+        """Parses the PIH code in the sourceCode"""   
         sourceCode='\n'.join(map(self.stripCRLF,sourceCode)) # remove CRLF, makes just LFs out of it
         sourceCode+='\n'
         #sourceCode=string.join(sourceCode,'\n')
@@ -208,7 +207,7 @@ try:
     from cStringIO import StringIO
 except:
     from io import StringIO\n''')
-        self.output.write("py_code=sys.stdout\n")
+        #self.output.write("py_code_output_stream=sys.stdout\n")
         self.destLine=1 # first line with an origin in pih code
         while self.pointer<len(self.pihCode):
             rest=self.pihCode[self.pointer:]
@@ -242,9 +241,9 @@ except:
                     # as original phrases for gettext
                     # fortunately, everyone uses English as the original
                     # if not, we'll wait for the bugreports :-/
-                    self.output.write('py_code.write(str(')
+                    self.output.write('py_code_output_stream.write(str(')
                 else:
-                    self.output.write('py_code.write(_(')
+                    self.output.write('py_code_output_stream.write(_(')
                 startLineNum=self.getLineNum(start)
                 varCodeLines=taggedCode.split("\n")
                 for i in range(len(varCodeLines)):
@@ -368,7 +367,7 @@ except:
                         if i!=len(htmlLines)-1:
                             out=out+'\\n'
                         self.output.write(" "*4*self.indent)
-                        self.output.write('py_code.write("%s")\n' %out)
+                        self.output.write('py_code_output_stream.write("%s")\n' %out)
                         self.lineMapping[self.destLine]=self.getLineNum(p)
                         self.destLine+=1
                 p=p+len(htmlLine)+1
@@ -429,10 +428,11 @@ except:
 
 
 if __name__ == '__main__':
-    # do_it=PIH(sys.argv[1])
-    pythonCode=PIH('python_in_latex.txt').pythonCode()
+    pih=PIH(sys.argv[1])
+    pythonCode=pih.pythonCode()
     print(pythonCode)
-    special_value='4777'
-
-    exec (pythonCode)
+    try:
+        exec (pythonCode)
+    except Exception as ex:
+        print('Exception:',str(ex))
     
