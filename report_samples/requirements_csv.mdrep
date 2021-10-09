@@ -1,11 +1,12 @@
 outputdir:.
 outputfilemask:$n_csv.txt
 
-<indent>
-<% for i in range(10): %>
-	<tr>
-	<td><%= i %></td>
-	<td><%= i**2 %></td>
-	</tr>
-</indent>
+<% for name, obj in self.objs.items():
+ obj=obj['obj']
+ if 'requirements' in obj:
+  for req in obj['requirements']:
+   if isinstance(req,dict) and 'text' in req:%>
+    <indent>
+        "<%= name %>","<%= " ".join(req['text']).strip().replace('"','""') %>"<%= '\n' %>
+    </indent>
 

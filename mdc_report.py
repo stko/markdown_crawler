@@ -37,8 +37,13 @@ input_file_path=os.path.abspath(args.input_filename.strip())
 
 class Reporter:
 
-	def __init__(self):
-		self.objs = {}
+	def __init__(self,input_file_path):
+		self.objs={}
+		with open(input_file_path) as json_file:
+			try:
+				self.objs = json.load(json_file)
+			except Exception as ex:
+				print(f'ERROR: No valid json in {input_file_path}, program terminating',str(ex))
 		
 
 
@@ -100,9 +105,11 @@ class Reporter:
 
 
 if __name__ == '__main__':
-	reporter = Reporter()
+	reporter = Reporter(input_file_path)
+	if not reporter.objs:
+		parser.error()
 	md_objects = reporter.scan_for_reports(walk_dir)
 
 	# print(md_objects)
-	pprint(reporter.objs)
+	#pprint(reporter.objs)
 
