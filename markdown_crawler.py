@@ -146,6 +146,7 @@ class Crawler:
 		for walk_dir in walk_dirs:
 			if os.path.isfile(walk_dir):
 				md_objects[walk_dir] = self.import_file(walk_dir)
+				continue
 			for root, subdirs, files in os.walk(walk_dir):
 				for subdir in subdirs:
 					pass

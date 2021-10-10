@@ -1,12 +1,11 @@
-outputdir:.
-outputfilemask:$n_csv.txt
+outputpathmask:$1_requirements.csv
+outputvars:name
 
 <% for name, obj in self.objs.items():
  obj=obj['obj']
  if 'requirements' in obj:
   for req in obj['requirements']:
    if isinstance(req,dict) and 'text' in req:%>
-    <indent>
-        "<%= name %>","<%= " ".join(req['text']).strip().replace('"','""') %>"<%= '\n' %>
-    </indent>
-
+<indent>
+    "<%= name %>","<%= "\n".join(req['text']).strip().replace('"','""') %>"<%= '\n' %>
+</indent>

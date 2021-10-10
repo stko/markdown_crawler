@@ -167,7 +167,7 @@ class PIH:
 
     endTag={"<%":"%>","<%=":"%>","<%_":"%>","<%%":"%%>"}
 
-    def __init__(self,source=None):
+    def __init__(self,source=None,vars=''):
         self.defaultEncoding="unicode"
         if not source:
             return
@@ -176,6 +176,7 @@ class PIH:
                source=fin.readlines()
         else:
             source=source.split('\n')
+        self.outputvars=vars
         self.parse(source)
         
     def parse(self,sourceCode):
@@ -258,7 +259,7 @@ except:
                         self.output.write("\n")
                     self.lineMapping[self.destLine]=startLineNum+i
                     self.destLine+=1
-                self.output.write("))\n")
+                self.output.write("),["+self.outputvars+"])\n")
                 self.pointer=end
                 self.startHTML=self.pointer
             elif rest.startswith("<%"):
@@ -356,6 +357,8 @@ except:
                     out=htmlLine
                     #if i>0:
                     #   out=string.lstrip(htmlLine) # strips indentation
+                    if i>0 and self.indent:
+                        out=out[self.indent:]
                     out=out.replace("\\",r"\\")
                     out=out.replace("'",r"\'")
                     out=out.replace('"',r'\"')
@@ -367,7 +370,7 @@ except:
                         if i!=len(htmlLines)-1:
                             out=out+'\\n'
                         self.output.write(" "*4*self.indent)
-                        self.output.write('py_code_output_stream.write("%s")\n' %out)
+                        self.output.write('py_code_output_stream.write("{0}",[{1}])\n'.format(out,self.outputvars))
                         self.lineMapping[self.destLine]=self.getLineNum(p)
                         self.destLine+=1
                 p=p+len(htmlLine)+1
