@@ -22,10 +22,13 @@ parser.add_argument("-o", "--output", dest="output_filename",
 parser.add_argument("-i", "--input", dest="input_paths", action='append',
 				  help="read from INPUT , can be file or directory", metavar="INPUT", required=True)
 
+parser.add_argument("-x", "--exclude", dest="exclude_dirs", action='append', default=[] ,
+				  help="exclude directories", metavar="INPUT", required=False)
+
 args = parser.parse_args()
 
 walk_dir = []
-exclude_dirs = ['mistletoe']
+
 
 # If your current working directory may change during script execution, it's recommended to
 # immediately convert program arguments to an absolute path. Then the variable root below will
@@ -69,6 +72,8 @@ class Crawler:
 			if not isinstance(file_obj, list) and not 'name' in file_obj:
 				continue
 			for obj in file_obj:
+				if not isinstance(obj, list) and not 'name' in obj:
+					continue
 				obj_name_lower = obj['name'].lower()
 				parents = []
 				if not 'parent' in obj:
@@ -148,8 +153,15 @@ class Crawler:
 				md_objects[walk_dir] = self.import_file(walk_dir)
 				continue
 			for root, subdirs, files in os.walk(walk_dir):
+				directories_to_exclude=[]
 				for subdir in subdirs:
 					pass
+					dir_name=os.path.basename(subdir)
+					if dir_name.lower() in args.exclude_dirs: # do not read that
+						directories_to_exclude.append(subdir)
+						continue
+				for excluded_dir in directories_to_exclude:
+					subdirs.remove(excluded_dir)
 				for filename in files:
 					if not filename[-3:] == '.md':
 						continue

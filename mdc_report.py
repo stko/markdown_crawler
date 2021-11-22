@@ -72,9 +72,11 @@ class Reporter:
 		# resolves symbolic links
 		if follow_symlinks:
 			matchpath = os.path.realpath(path)
+			basepath = os.path.realpath(basedir)
 		else:
 			matchpath = os.path.abspath(path)
-		return basedir == os.path.commonpath((basedir, matchpath))
+			basepath = os.path.abspath(basedir)
+		return basepath == os.path.commonpath((basepath, matchpath))
 
 
 	def write(self,text, vars):
