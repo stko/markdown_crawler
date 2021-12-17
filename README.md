@@ -235,3 +235,16 @@ In this case MDC takes all header fields as key identiers and creates an hash of
             'key C' : 'val 2 C',
         }
     }
+
+## Ugly Problems
+The parser is not perfect, so a few syntax rules has to be followed
+
+a table header seperator has to have at least 3 '-' (='---') in a row
+
+Correct:
+
+  | --- |
+
+Wrong:
+
+  | -- |

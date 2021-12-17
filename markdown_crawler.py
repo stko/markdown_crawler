@@ -166,6 +166,7 @@ class Crawler:
 					if not filename[-3:] == '.md':
 						continue
 					file_path = os.path.join(root, filename)
+					print(f'actual File: {file_path}')
 					md_objects[file_path] = self.import_file(file_path)
 		self.remove_scrap(md_objects)
 		self.collect_objs_by_name(md_objects)
