@@ -10,39 +10,6 @@ from pprint import pprint
 import json
 from pythonintext import PIH
 
-parser = argparse.ArgumentParser(description='Creates output (reports) out of a json database and PIH report templates')
-
-parser.add_argument("-i", "--input", dest="input_filename",
-				  help="read json input from INPUT", metavar="INPUT", required=True)
-
-parser.add_argument("-r", "--rootoutputdir", dest="root_dir", default= None,
-				  help="root dir ROOT where all reports should be stored below", metavar="ROOT", required=False)
-
-parser.add_argument("-d", "--directory", dest="input_paths", action='append',
-				  help="search for report templates in DIR , can be file or directory", metavar="DIR", required=True)
-
-args = parser.parse_args()
-
-walk_dir = []
-
-
-# If your current working directory may change during script execution, it's recommended to
-# immediately convert program arguments to an absolute path. Then the variable root below will
-# be an absolute path as well. Example:
-
-for path in args.input_paths:
-	# the strip() is nessary as for what ever reasons the parameter do get a leading " " (??? :-|)
-	try:
-		walk_dir.append(os.path.abspath(path.strip()))
-	except:
-		print(f'Error: {path} is no valid directory or file')
-
-input_file_path=os.path.abspath(args.input_filename.strip())
-if args.root_dir:
-	root_dir_path=os.path.abspath(args.root_dir.strip())
-else:
-	root_dir_path=None
-
 
 
 class Reporter:
@@ -93,7 +60,7 @@ class Reporter:
 			print("Error: calculated output path {0} is an existing directory!".format(output_file_path))
 			return
 			
-		print('calculated path:',output_file_path)
+		#print('calculated path:',output_file_path)
 		# do we have that file stream already?
 		if output_file_path in self.output_file_handles:
 			fh=self.output_file_handles[output_file_path]
@@ -146,7 +113,9 @@ class Reporter:
 			py_code_output_stream=self
 			pih=PIH(remaining_content,self.outputvars)
 			pythonCode=pih.pythonCode()
-			print(pythonCode)
+			source_lines=pythonCode.split('\n')
+			for i in range(len(source_lines)):
+				print(f'{i}:{source_lines[i]}')
 			try:
 				exec (pythonCode)
 			except Exception as ex:
@@ -185,6 +154,35 @@ class Reporter:
 
 
 if __name__ == '__main__':
+	parser = argparse.ArgumentParser(description='Creates output (reports) out of a json database and PIH report templates')
+
+	parser.add_argument("-i", "--input", dest="input_filename",
+					help="read json input from INPUT", metavar="INPUT", required=True)
+
+	parser.add_argument("-r", "--rootoutputdir", dest="root_dir", default= None,
+					help="root dir ROOT where all reports should be stored below", metavar="ROOT", required=False)
+
+	parser.add_argument("-d", "--directory", dest="input_paths", action='append',
+					help="search for report templates in DIR , can be file or directory", metavar="DIR", required=True)
+
+	args = parser.parse_args()
+	walk_dir = []
+
+
+	for path in args.input_paths:
+		# the strip() is nessary as for what ever reasons the parameter do get a leading " " (??? :-|)
+		try:
+			walk_dir.append(os.path.abspath(path.strip()))
+		except:
+			print(f'Error: {path} is no valid directory or file')
+
+	input_file_path=os.path.abspath(args.input_filename.strip())
+	if args.root_dir:
+		root_dir_path=os.path.abspath(args.root_dir.strip())
+	else:
+		root_dir_path=None
+
+
 	reporter = Reporter(input_file_path,args.root_dir)
 	if not reporter.objs:
 		parser.error('No input data')
