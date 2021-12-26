@@ -128,7 +128,7 @@ class Crawler:
 								f'Error: {parent} is refenced in {obj_name}, but does not exist')
 
 	def import_file(self, file_path):
-		with open(file_path, 'r') as fin:
+		with open(file_path, 'r', encoding="utf-8") as fin:
 			with MSONRenderer() as renderer:
 				self.renderer = renderer
 				rendered = renderer.render(Document(fin))
@@ -137,7 +137,7 @@ class Crawler:
 	def save(self, file_path):
 		try:
 			with open(file_path, 'w') as fout:
-				json.dump(self.objs, fout)
+				json.dump(self.objs, fout, indent=4, sort_keys=True)
 		except Exception as ex:
 			print(f'Error: Couldn\' save result to {file_path} : {str(ex)}')
 
