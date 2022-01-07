@@ -27,7 +27,7 @@ class Reporter:
 		self.outputvars=''
 		self.output_file_handles={}
 		try:
-			with open(input_file_path) as json_file:
+			with open(input_file_path,encoding='utf8') as json_file:
 				try:
 					self.objs = json.load(json_file)
 				except Exception as ex:
@@ -67,7 +67,7 @@ class Reporter:
 		else:
 			#create dir, if not
 			os.makedirs(os.path.dirname(output_file_path),exist_ok=True)
-			fh=open(output_file_path,'w')
+			fh=open(output_file_path,'w',encoding='utf8')
 			self.output_file_handles[output_file_path]=fh
 		fh.write(text)
 
@@ -82,7 +82,7 @@ class Reporter:
 
 	def import_file(self, file_path):
 		this_options={}
-		with open(file_path, 'r') as fin:
+		with open(file_path, 'r',encoding='utf8') as fin:
 			# if there is no fixed root base output directory given, then we use the folder of where the template is stored in
 			if not root_dir_path:
 				self.base_output_file_path=os.path.dirname(file_path)
@@ -92,18 +92,19 @@ class Reporter:
 			read_header=True
 			while line != None and read_header:
 				print(file_path, line)
-				if line and not line[:1] == '#': #ignore comments
-					try:
-						elements=line.split(':',2)
-						key=elements[0]
-						value=elements[1]
-						this_options[key]=value
-						if key == 'outputpathmask':
-							self.outputpathmask=value
-						if key == 'outputvars':
-							self.outputvars=value
-					except:
-						pass
+				if line:
+					if  not line[:1] == '#': #ignore comments
+						try:
+							elements=line.split(':',2)
+							key=elements[0]
+							value=elements[1]
+							this_options[key]=value
+							if key == 'outputpathmask':
+								self.outputpathmask=value
+							if key == 'outputvars':
+								self.outputvars=value
+						except:
+							pass
 					line=fin.readline().strip()
 				else:
 					read_header=False
@@ -125,7 +126,7 @@ class Reporter:
 
 	def save(self, file_path):
 		try:
-			with open(file_path, 'w') as fout:
+			with open(file_path, 'w',encoding='utf8') as fout:
 				json.dump(self.objs, fout)
 		except Exception as ex:
 			print(f'Error: Couldn\' save result to {file_path} : {str(ex)}')
