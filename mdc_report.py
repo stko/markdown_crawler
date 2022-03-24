@@ -53,9 +53,9 @@ class Reporter:
 			searchfor="$"+str(int(i+1))
 			calculated_file_path=calculated_file_path.replace(searchfor,vars[i])
 		output_file_path=os.path.join(self.base_output_file_path,calculated_file_path)
-		if not self.is_safe_path(self.base_output_file_path,output_file_path):
+		'''if not self.is_safe_path(self.base_output_file_path,output_file_path):
 			print("Error: calculated output path {0} is OUTSIDE the base dir {1}".format(output_file_path,self.base_output_file_path))
-			return
+			return'''
 		if  os.path.isdir(output_file_path):
 			print("Error: calculated output path {0} is an existing directory!".format(output_file_path))
 			return

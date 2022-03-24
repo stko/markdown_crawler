@@ -1,0 +1,43 @@
+outputpathmask:variants.csv
+outputvars:name
+
+<%
+def safe_output(dictionary,key):
+ if key in dictionary:
+  element=dictionary[key]
+  if isinstance(element,dict) or isinstance(element,list):
+   if element: #  not empty
+    return str(element)
+   else:
+    return ''
+  else:
+   return str(element)
+ return ''
+%>
+<indent>
+<%
+standard_headers=["Model" , "System" , "Component" , "Variant" , "Level" , "Position" , "Function" , "EffIn" , "EffOut"  , "Parent" ]
+extra_headers=set()
+for name, obj in self.objs.items():
+ obj=obj['obj']
+ if 'variants' in obj:
+  for variant in obj['variants']:
+   for key, value in variant.items():
+    if not key in standard_headers:
+     extra_headers.add(key)
+     all_headers=standard_headers+list(extra_headers)
+%>
+<%= "\t".join(all_headers) %><%= '\n' %>
+
+<%
+for name, obj in self.objs.items():
+ obj=obj['obj']
+ if 'variants' in obj:
+  for variant in obj['variants']:
+   this_line=[]
+   for header in all_headers:
+    this_line.append(safe_output(variant,header))
+%>
+
+   <%= "\t".join(this_line) %><%= '\n' %>
+</indent>
