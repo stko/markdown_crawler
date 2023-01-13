@@ -7,6 +7,13 @@ import os.path
 import subprocess
 import argparse
 import re
+import shlex
+
+#set the os specific commands
+if os.name=="nt":
+	charset="cp1252"
+else:
+	charset="utf-8"
 
 
 def calculate(cmd_line, args):
@@ -56,25 +63,38 @@ def executeAsCallback(cmd_line, config, active_dir, call_back):
 
 
 allLines = []
-allLinesContains=False
+allLinesContains = False
+
 
 def collectLines(line, return_code=0):
+    global allLines, allLinesContains,charset
     if line == None:
         return
     pattern = re.compile(".*#!# jtp #!#\s*(\S+)\s*#!#\s*(.*)")
     match = pattern.match(line)
     if match:
-        print("matching!:", line, match.groups())
-        if allLinesContains: # it's not just empty
-            with open(match.groups(1),"w") as fout:
-                for line in allLines:
-                    fout.write(line)
-            os.system(match.groups(2))
-
+        print("matching!:", line, match.group())
+        if allLinesContains:  # it's not just empty
+            output = match.group(1)
+            cmd_line = match.group(2)
+            if output != "-":
+                with open(output, "w") as fout:
+                    for line in allLines:
+                        fout.write(line)
+                if cmd_line != "-":
+                    os.system(match.group(2))
+            else:
+                if cmd_line != "-":
+                    #cmd_line="more"
+                    print(shlex.split(cmd_line))
+                    with subprocess.Popen(shlex.split(cmd_line), shell=True, stdin=subprocess.PIPE ) as p:
+                        for line in allLines:
+                            p.stdin.write(line.encode(charset))
+                        p.stdin.close()
     else:
         allLines.append(line)
         if line:
-            allLinesContains=True
+            allLinesContains = True
         print(line)
 
 

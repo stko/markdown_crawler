@@ -1,8 +1,16 @@
+
 {{- range $elementName, $data := . -}}
     {{- $nodeName := .obj.candb.node_name -}}
     {{- range $name, $values := .obj.candb -}}
         {{- if eq $name "messages" -}}
-        <h2>CAN Messages of {{$elementName}}</h2>
+<html>
+<head>
+<title>
+Markdown Crawler
+</title>
+</head>
+<body>
+<h2>CAN Messages of {{$elementName}}</h2>
 <table>
 <tr>
 <th>Module</th>
@@ -49,6 +57,8 @@
                 {{- end -}}
             {{- end -}}
             </table>
+</body>
+</html>
     #!# jtp #!# {{$elementName}}.html #!# -
         {{- end -}}
     {{- end -}}
