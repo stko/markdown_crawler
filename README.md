@@ -248,3 +248,12 @@ Correct:
 Wrong:
 
   | -- |
+
+## Post Processing the Result
+
+As said, MDC generates a JSON object file which contains all found data. This file can be handled in many different ways. For convience we've made the helper tool jtp (JSON template processor), which transforms the json first into a flexible output format defined by an [EasyGen](https://github.com/go-easygen/easygen) template. If that output contains a special line
+   #!# jtp #!# outputfilename #!# command to execute
+
+then the output is written to a file and the command is started for further processing
+
+Please see the [JTP Readme](JTP.md) for details

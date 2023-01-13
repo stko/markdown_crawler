@@ -74,7 +74,11 @@ class Crawler:
 			for obj in file_obj:
 				if not isinstance(obj, list) and not 'name' in obj:
 					continue
-				obj_name_lower = obj['name'].lower()
+				try:
+					obj_name_lower = obj['name'].lower()
+				except Exception as ex:
+					print("exception", str(ex), "in", obj['name'])
+					sys.exit(0)
 				parents = []
 				if not 'parent' in obj:
 					parent_solved = True

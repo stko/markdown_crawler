@@ -1,0 +1,20 @@
+\documentclass[12pt,twoside,a4paper]{article}
+\usepackage{german}
+\begin{document}
+\section Ein Beispiel Dokument
+\subsection Ein Vorwort 
+Und hier extra für Sergei und Konstantin ein kleines \LaTeX Dokument, gefüllt mit Werten aus
+gesammelten Markdown- Dokumenten und per Reportgenerator in eine PDF- Summery verwandelt
+
+{{- range $elementName, $data := . -}}
+    {{- range .obj.requirements }}
+\section Beschreibung des Modul:{{ $elementName}}
+\emph{Severity: {{ .sev}}}
+
+        {{range .text -}}
+        {{- . -}}
+        {{- end}}
+    {{ end -}}
+{{- end -}}
+\end{document} 
+    #!# jtp #!# {{$elementName}}.tex #!# pdflatex -enable-installer {{$elementName}}.tex

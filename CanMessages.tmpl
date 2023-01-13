@@ -1,0 +1,55 @@
+{{- range $elementName, $data := . -}}
+    {{- $nodeName := .obj.candb.node_name -}}
+    {{- range $name, $values := .obj.candb -}}
+        {{- if eq $name "messages" -}}
+        <h2>CAN Messages of {{$elementName}}</h2>
+<table>
+<tr>
+<th>Module</th>
+<th>nodeName</th>
+<th>messagename</th>
+<th>length</th>
+<th>messageid</th>
+<th>name</th>
+<th>bitlength</th>
+<th>bitstart</th>
+<th>endian</th>
+<th>max</th>
+<th>min</th>
+<th>name</th>
+<th>offset</th>
+<th>scale</th>
+<th>unit</th>
+</tr>
+            {{- range $messageid, $messageStructs := $values -}}
+             {{- $length :=$messageStructs.length -}}
+             {{- $messagename :=$messageStructs.name -}}
+                {{- range $signalname, $signalvalues := $messageStructs -}}
+                    {{- if eq $signalname "signals" -}}
+                        {{- range $signalvalues -}}
+                            <tr>
+                            <td>{{$elementName -}}</td>
+                            <td>{{- $nodeName -}}</td>
+                            <td>{{- $messagename -}}</td>
+                            <td>{{- $length -}}</td>
+                            <td>{{- $messageid -}}</td>
+                            <td>{{- .name}}</td>
+                            <td>{{- .bitlength -}}</td>
+                            <td>{{- .bitstart -}}</td>
+                            <td>{{- .endian -}}</td>
+                            <td>{{- .max -}}</td>
+                            <td>{{- .min -}}</td>
+                            <td>{{- .name -}}</td>
+                            <td>{{- .offset -}}</td>
+                            <td>{{- .scale -}}</td>
+                            <td>{{- .unit -}}</td>
+                            <tr>
+                        {{ end -}}
+                    {{- end -}}
+                {{- end -}}
+            {{- end -}}
+            </table>
+    #!# jtp #!# {{$elementName}}.html #!# -
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
