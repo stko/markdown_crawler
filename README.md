@@ -23,7 +23,7 @@ https://github.com/apiaryio/mson
 
 
 ## Dependencies
-MDC uses the Markdown -> MSON Renderer, available as a [fork](https://github.com/stko/mistletoe) from Mistletoe, a Markdown Parser & Re- Renderer.
+MDC uses the Markdown Renderer [Mistletoe](https://github.com/miyuchina/mistletoe), a Markdown Parser & Re- Renderer and supports its own renderer (`contrib/mson.py`) to translate the Markdown content.
 
 
 That MSON Renderer implements today just its own small subset of the full MSON specification to  supply the features needed by MDC. 

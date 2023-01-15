@@ -1,3 +1,5 @@
 .vscode/*
 __pycache__/*
 .venv/*
+__pycache__
+mdcrawler.egg-info
