@@ -9,11 +9,11 @@ import argparse
 import re
 import shlex
 
-#set the os specific commands
-if os.name=="nt":
-	charset="cp1252"
+# set the os specific commands
+if os.name == "nt":
+    charset = "cp1252"
 else:
-	charset="utf-8"
+    charset = "utf-8"
 
 
 def calculate(cmd_line, args):
@@ -67,7 +67,7 @@ allLinesContains = False
 
 
 def collectLines(line, return_code=0):
-    global allLines, allLinesContains,charset
+    global allLines, allLinesContains, charset
     if line == None:
         return
     pattern = re.compile(".*#!# jtp #!#\s*(\S+)\s*#!#\s*(.*)")
@@ -85,12 +85,13 @@ def collectLines(line, return_code=0):
                     os.system(match.group(2))
             else:
                 if cmd_line != "-":
-                    #cmd_line="more"
+                    # cmd_line="more"
                     print(shlex.split(cmd_line))
-                    with subprocess.Popen(shlex.split(cmd_line), shell=True, stdin=subprocess.PIPE ) as p:
+                    with subprocess.Popen(shlex.split(cmd_line), shell=True, stdin=subprocess.PIPE) as p:
                         for line in allLines:
                             p.stdin.write(line.encode(charset))
                         p.stdin.close()
+        allLines = []  # clear input buffer
     else:
         allLines.append(line)
         if line:
