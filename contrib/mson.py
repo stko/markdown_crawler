@@ -439,58 +439,61 @@ class MSONRenderer(HTMLRenderer):
 		#print('inject',source['name'],'->', target['name'])
 		# we go through all source properties
 		for source_key, source_value in source.items():
-			if str(source_key).lower() == 'name':  # don't touch the objects name :-)
-				continue
-			if not source_key in target:  # that's easy: we only need to copy source to target
-				target[source_key] = copy.deepcopy(source_value)
-			else:  # not easy: we need to apply different strategies depending on the value types
-				target_value = target[source_key]
-				if isinstance(target_value, str) and target_value[:1] == '#':
-					# the '#' surpresses the source copy operation
+			try:
+				if str(source_key).lower() == 'name':  # don't touch the objects name :-)
 					continue
-				source_is_dict = isinstance(source_value, collections.abc.Mapping)
-				source_is_list = isinstance(source_value, list)
-				source_is_scalar = not (source_is_dict or source_is_list)
-				target_is_dict = isinstance(target_value, collections.abc.Mapping)
-				target_is_list = isinstance(target_value, list)
-				target_is_scalar = not (target_is_dict or target_is_list)
+				if not source_key in target:  # that's easy: we only need to copy source to target
+					target[source_key] = copy.deepcopy(source_value)
+				else:  # not easy: we need to apply different strategies depending on the value types
+					target_value = target[source_key]
+					if isinstance(target_value, str) and target_value[:1] == '#':
+						# the '#' surpresses the source copy operation
+						continue
+					source_is_dict = isinstance(source_value, collections.abc.Mapping)
+					source_is_list = isinstance(source_value, list)
+					source_is_scalar = not (source_is_dict or source_is_list)
+					target_is_dict = isinstance(target_value, collections.abc.Mapping)
+					target_is_list = isinstance(target_value, list)
+					target_is_scalar = not (target_is_dict or target_is_list)
 
-				# ok, let's go through all combinations..
-				if source_is_scalar:
-					if target_is_scalar:
-						if source_value != target_value: # this avoids to have the same skalar value multiple times
-							target[source_key] = [source_value, target_value]
-					if target_is_dict:
-						target_value.append(source_value)
-					if target_is_list:
-						# make a boolean flag out of it..
-						target_value[source_value] = True
-				if source_is_dict:
-					if target_is_scalar:
-						target[source_key] = copy.deepcopy(source_value)
-						# make a boolean flag out of it..
-						target[source_key][target_value] = True
-					if target_is_dict:
-						self.inject_properties(
-							source_value, target_value, source_file_path, target_file_path)
-					if target_is_list:
-						if source_file_path and target_file_path:
-							print('Error: Can\'t join property {0} from {1} into {2} :different data type hash -> list'.format(
-								source_key, source_file_path, target_file_path))
-						else:
-							print(
-								'Error: Can\'t join property {0} :different data type hash -> list'.format(source_key))
-				if source_is_list:
-					if target_is_scalar:
-						target[source_key] = copy.deepcopy(source_value)
-						# make a common list out of it..
-						target[source_key].append(target_value)
-					if target_is_dict:
-						if source_file_path and target_file_path:
-							print('Error: Can\'t join property {0} from {1} into {2} :different data type list -> hash'.format(
-								source_key, source_file_path, target_file_path))
-						else:
-							print(
-								'Error: Can\'t join property {0} :different data type list -> hash'.format(source_key))
-					if target_is_list:
-						target_value.extend(copy.deepcopy(source_value))
+					# ok, let's go through all combinations..
+					if source_is_scalar:
+						if target_is_scalar:
+							if source_value != target_value: # this avoids to have the same skalar value multiple times
+								target[source_key] = [source_value, target_value]
+						if target_is_dict:
+							target_value.append(source_value)
+						if target_is_list:
+							# make a boolean flag out of it..
+							target_value[source_value] = True
+					if source_is_dict:
+						if target_is_scalar:
+							target[source_key] = copy.deepcopy(source_value)
+							# make a boolean flag out of it..
+							target[source_key][target_value] = True
+						if target_is_dict:
+							self.inject_properties(
+								source_value, target_value, source_file_path, target_file_path)
+						if target_is_list:
+							if source_file_path and target_file_path:
+								print('Error: Can\'t join property {0} from {1} into {2} :different data type hash -> list'.format(
+									source_key, source_file_path, target_file_path))
+							else:
+								print(
+									'Error: Can\'t join property {0} :different data type hash -> list'.format(source_key))
+					if source_is_list:
+						if target_is_scalar:
+							target[source_key] = copy.deepcopy(source_value)
+							# make a common list out of it..
+							target[source_key].append(target_value)
+						if target_is_dict:
+							if source_file_path and target_file_path:
+								print('Error: Can\'t join property {0} from {1} into {2} :different data type list -> hash'.format(
+									source_key, source_file_path, target_file_path))
+							else:
+								print(
+									'Error: Can\'t join property {0} :different data type list -> hash'.format(source_key))
+						if target_is_list:
+							target_value.extend(copy.deepcopy(source_value))
+			except Exception as ex:
+				print (f"Exception on source_key= {source_key} and source_value= {source_value}",str(ex))
