@@ -173,7 +173,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Converts markdown files in directories into one json structure')
     parser.add_argument("-o", "--output", dest="output_filename",
-                        help="write json output to OUTPUT", metavar="OUTPUT", required=True)
+                        help="write json output to OUTPUT", metavar="OUTPUT", default="mdcrawler_result.json")
 
     parser.add_argument("-i", "--input", dest="input_paths", action='append',
                         help="read from INPUT , can be file or directory", metavar="INPUT", required=True)
