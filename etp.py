@@ -6,6 +6,7 @@ import os
 import os.path
 import subprocess
 import argparse
+import json
 import re
 import shlex
 
@@ -98,6 +99,22 @@ def collectLines(line, return_code=0):
             allLinesContains = True
         print(line)
 
+def executeRun(args):
+    try:
+        with open(args.inputfile,encoding="utf8") as fin:
+            print("geht 1")
+            json_data=json.load(fin)
+            for id, element_data in json_data.items():
+                if "obj" in element_data:
+                    element_obj=element_data["obj"]
+                    if args.element in element_obj:
+                        excel_data=element_obj[args.element]
+                        if args.name not in excel_data:
+                            print(f"Error: {args.element}- object in {element_data['file_path']} does not provide a valid excel name property named {args.name}")
+                            continue
+    except IOError as ex:
+        print("Error: Can't open inputfile!",str(ex))
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -107,11 +124,8 @@ if __name__ == "__main__":
                         help="the excel file to be used as template")
     parser.add_argument("-e", "--element", required=True,
                         help="the element which is used as root which contains all other elements")
-    parser.add_argument("-p", "--property", required=True,
-                        help="the property which is used as root which contains all other elements")
+    parser.add_argument("-n", "--name", default="excelname",
+                        help="the property which is contains the name for the generated excel file")
 
     args = parser.parse_args()
-    for template in args.templates:
-        print(f"easygen {args.inputfile} {template}")
-        executeAsCallback(
-            ["easygen", template, args.inputfile], "", "", collectLines)
+    executeRun(args)
