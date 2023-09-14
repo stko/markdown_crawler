@@ -44,7 +44,7 @@ class MSONRenderer(HTMLRenderer):
 		html._charref = _charref
 
 		# here the magic takes place: this is the nested list we fill
-		self.mson_object = []  # the root element is an array
+		self.mson_object = {}  # the root element is an array
 		# point to where the actual parsed node should be added into
 		self.actual_nested_obj = self.mson_object
 
@@ -95,20 +95,9 @@ class MSONRenderer(HTMLRenderer):
 		list[key].append(value)
 
 	def render_image(self, token):
-		image = {'src': token.src}
-		if token.title:
-			image['title'] = token.title
-		else:
-			image['title'] = ''
-		self.add_properties(self.actual_nested_obj, 'img', image)
-		return image
+		self.add_properties(self.actual_nested_obj, 'img', token.src)
+		return token.src
 
-		template = '<img src="{}" alt="{}"{} />'
-		if token.title:
-			title = ' title="{}"'.format(self.escape_mson(token.title))
-		else:
-			title = ''
-		return template.format(token.src, self.render_to_plain(token), title)
 
 	def render_link(self, token):
 		# just return the text of a link
