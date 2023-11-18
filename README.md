@@ -7,7 +7,7 @@ The Markdown Crawler (MDC) is designed to
 * resolves all object inheritance properties
 * presents the result as json object string on stdout
 
-The main propose of MDC is to collect data out of a tree of development documents written in Markdown to generate report documents out of it.
+The main purpose of MDC is to collect data out of a tree of development documents written in Markdown to generate report documents or data collections out of it.
 
 By that information about component properties can be generated and stored in a few central documents following the single source principle. All other downstreamed documents can then be made by automated report generators.
 
@@ -192,7 +192,7 @@ Multiline Strings: As visible in the example above, MDC can handle multiline str
 
 ### Tables as Hashes
 
-Defining object properties as list is one way, but expecially in such cases with a lot of repeating properties MDC offers also the way to use tables as sources. MDC knows two kinds of tables, which differs only in the left-top-most cell, but give different results. At first we see a table, where the left- top-most -cell is not empty:
+Defining object properties as list is one way, but expecially in such cases with a lot of repeating properties MDC offers also the way to use tables as sources. MDC knows two kinds of tables, which differs only in the left-top-most cell, but will give different results. At first we see a table, where the left- top-most cell is not empty:
 
 | key A   | key B   | key C   |
 |---------|---------|---------|
@@ -252,8 +252,65 @@ Wrong:
 ## Post Processing the Result
 
 As said, MDC generates a JSON object file which contains all found data. This file can be handled in many different ways. For convience we've made the helper tool jtp (JSON template processor), which transforms the json first into a flexible output format defined by an [EasyGen](https://github.com/go-easygen/easygen) template. If that output contains a special line
-   #!# jtp #!# outputfilename #!# command to execute
+
+`#!# jtp #!# outputfilename #!# command to execute`
 
 then the output is written to a file and the command is started for further processing
 
 Please see the [JTP Readme](JTP.md) for details
+
+## Setup
+
+The setup is business as usual:
+
+download the python source
+
+`git clone https://github.com/stko/markdown_crawler.git`
+
+change into that directory
+
+`cd markdown_crawler`
+
+create the python virtual environmnt and activate it
+
+```
+python -m venv .venv
+.venv\Scripts\activate
+```
+
+install mistletoe
+
+`pip install mistletoe`
+
+## A First Run
+When the initial setup is done and the virtual environment is activated, a first run can be made. The call
+
+`python mdcrawler.py -i test -o test.json`
+
+goes through the `test` directory, finds all contained markdown (*.md) files and tries to find any data structures in it. If found, all data is collected and stored into the `test.json` file, which is a standard json file.
+
+### Further processing
+As the output is in standard json format, it can be further processed with any tool which can deal with json input.
+
+As an example of such a post processing some samples are provided for the [EasyGen Report Generator](https://github.com/go-easygen/easygen#easygen---easy-to-use-universal-codetext-generator). To use it, you'll need to install the executable from the [Github Release page](https://github.com/go-easygen/easygen/releases). For Windows, just unzip the executable `easygen.exe` out of the zip archive and place it somewhere in your search path or in your local markdown_crawler directory.
+
+When `easygen` is installed, the above generated output `test.json` can be further processed.
+
+#### A HTML Summary
+The call
+
+`python jtp.py -i test.json -t CanMessages.tmpl`
+
+transformes the found CAN Message data into an HTML table summary, which can be found in the generated output file `mymodule.html`
+
+#### Design Requirements Document
+
+If any LaTex environment is installed, the call
+
+`python jtp.py -i test.json -t Requirements.tmpl`
+
+
+creates a `Requirements.pdf` output, which contains all found requirements. By adjusting the laTex layout in `Requirements.tmpl` to your preferred design, some professional looking documents can be made in one go.
+
+
+

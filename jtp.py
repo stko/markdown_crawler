@@ -44,7 +44,7 @@ def executeAsCallback(cmd_line, config, active_dir, call_back):
 
     when process is finished, call_back is called a last time with a 'None' value to indicate that the process has finished
     '''
-    print(cmd_line)
+    #print(cmd_line)
     cwd = '.'
     if active_dir:
         cwd = os.path.dirname(os.path.realpath(active_dir))
@@ -73,7 +73,7 @@ def collectLines(line, return_code=0):
     pattern = re.compile(".*#!# jtp #!#\s*(\S+)\s*#!#\s*(.*)")
     match = pattern.match(line)
     if match:
-        print("matching!:", line, match.group())
+        #print("matching!:", line, match.group())
         if allLinesContains:  # it's not just empty
             output = match.group(1)
             cmd_line = match.group(2)
@@ -85,8 +85,7 @@ def collectLines(line, return_code=0):
                     os.system(match.group(2))
             else:
                 if cmd_line != "-":
-                    # cmd_line="more"
-                    print(shlex.split(cmd_line))
+                    # print(shlex.split(cmd_line))
                     with subprocess.Popen(shlex.split(cmd_line), shell=True, stdin=subprocess.PIPE) as p:
                         for line in allLines:
                             p.stdin.write(line.encode(charset))
@@ -96,7 +95,7 @@ def collectLines(line, return_code=0):
         allLines.append(line)
         if line:
             allLinesContains = True
-        print(line)
+        print(line, end="")
 
 
 if __name__ == "__main__":
@@ -108,6 +107,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     for template in args.templates:
-        print(f"easygen {args.inputfile} {template}")
+        #print(f"easygen {args.inputfile} {template}")
         executeAsCallback(
             ["easygen", template, args.inputfile], "", "", collectLines)
