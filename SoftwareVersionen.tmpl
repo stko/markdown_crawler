@@ -1,0 +1,9 @@
+{{"Artikelnummer\tVersion\tUsage" }}
+{{range $elementName, $outerdata := . -}}
+{{range  $key, $value := .obj -}}
+{{ if eq $key "sw_revision" -}}
+{{$elementName }}{{ "\t" }}{{ .version }}{{ "\t" }}{{ .usage }}
+{{ end -}}
+{{ end -}}
+{{ end -}}
+#!# jtp #!# svr.csv #!#
