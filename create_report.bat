@@ -5,3 +5,4 @@
  -x "mistletoe"^
  -x "kiwi"^
  -o result.json
+ cscript send_outlookmail.vbs %~dp0\result.json
