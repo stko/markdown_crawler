@@ -44,7 +44,7 @@ class Crawler:
 
     def collect_objs_by_name(self, md_objects):
         for file_path, file_obj in md_objects.items():
-            if not isinstance(file_obj, list) and not 'name' in file_obj:
+            if file_obj==None or (not isinstance(file_obj, list) and not 'name' in file_obj):
                 continue
             for obj in file_obj:
                 if not isinstance(obj, list) and not 'name' in obj:
@@ -113,6 +113,13 @@ class Crawler:
                 rendered = renderer.render(Document(fin))
                 return rendered
 
+    def import_json_file(self, file_path):
+        try:
+            with open(file_path, 'r', encoding="utf-8") as fin:
+                return [json.load(fin)]
+        except Exception as ex:
+            print(f"Error: Couldn't load {file_path}: {str(ex)}")
+
     def save(self, output_file):
         try:
             if isinstance(output_file, str):
@@ -158,11 +165,13 @@ class Crawler:
                 for excluded_dir in directories_to_exclude:
                     subdirs.remove(excluded_dir)
                 for filename in files:
-                    if not filename[-3:] == '.md':
-                        continue
                     file_path = os.path.join(root, filename)
-                    self.print(f'actual File: {file_path}')
-                    md_objects[file_path] = self.import_file(file_path)
+                    if filename[-3:] == '.md':
+                        self.print(f'actual md File: {file_path}')
+                        md_objects[file_path] = self.import_file(file_path)
+                    if filename[-3:] == '.jd':
+                        self.print(f'actual jd File: {file_path}')
+                        md_objects[file_path] = self.import_json_file(file_path)
         self.remove_scrap(md_objects)
         self.collect_objs_by_name(md_objects)
         self.copy_parents()
