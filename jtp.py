@@ -78,7 +78,7 @@ allLinesContains = False
 
 def collectLines(line, return_code=0):
     global allLines, allLinesContains, charset,args
-    if line == None:
+    if line is None:
         return
     pattern = re.compile(".*#!# jtp #!#\s*(\S+)\s*#!#\s*(.*)")
     match = pattern.match(line)
@@ -88,7 +88,7 @@ def collectLines(line, return_code=0):
             output = match.group(1)
             cmd_line = match.group(2)
             if output != "-":
-                with open(output, "w") as fout:
+                with open(os.path.join(args.directory,output), "w", encoding="utf8") as fout:
                     for line in allLines:
                         fout.write(line)
                 if cmd_line != "-":
