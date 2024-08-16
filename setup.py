@@ -5,7 +5,7 @@ setup(
     version='0.0.1',
     description='read MSON (JSON in Markdown) out of MarkDown files and saves as JSON',
     license='MIT',
-    packages=find_packages(),
+    packages=[".","contrib"],
     author='Steffen Köhler',
     author_email='steffen@koehlers.de',
     keywords=['markdown','json','mistletoe'],
