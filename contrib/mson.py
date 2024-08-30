@@ -239,7 +239,7 @@ class MSONRenderer(HTMLRenderer):
 
 	def eval_text_syntax(self, text):
 		text = text.strip()
-		key_pattern = re.compile(r'^(\w+).*')
+		key_pattern = re.compile(r'^(\S+).*')
 		type_pattern = re.compile(r'.*\((.*)\)$')
 		value_pattern = re.compile(r'^\s*\w+\s*:(.+)(\(.*\))*$')
 
