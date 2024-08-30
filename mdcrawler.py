@@ -41,18 +41,21 @@ class Crawler:
                 file_obj.remove(del_obj)  # clean up
             if not file_obj:
                 self.print(f'Warning: {file_path} does not contain any object data')
+            else:
+                self.print(f'Info: {file_path}: some data found')
 
     def collect_objs_by_name(self, md_objects):
         for file_path, file_obj in md_objects.items():
-            if file_obj==None or (not isinstance(file_obj, list) and not 'name' in file_obj):
+            #if file_obj==None or (not isinstance(file_obj, list) or not 'name' in file_obj):
+            if not isinstance(file_obj, list):
                 continue
             for obj in file_obj:
-                if not isinstance(obj, list) and not 'name' in obj:
+                if not isinstance(obj, dict) or not 'name' in obj:
                     continue
                 try:
                     obj_name_lower = obj['name'].lower()
                 except Exception as ex:
-                    print("exception", str(ex), "in", obj['name'])
+                    print("exception: ", str(ex), "in", file_path)
                     sys.exit(0)
                 parents = []
                 if not 'parent' in obj:
@@ -192,6 +195,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     crawler = Crawler(True)
+    #test=crawler.import_file("C:\\Daten\\Dokumente\\workcopies_mafi\\Produktlinien\\Challenger\\Year-24_Challenger_150_and_280\\EL\\14401_WH_FLOOR\\docs\\variants.md")
+    #pass
     md_objects = crawler.crawl(args.input_paths, args.exclude_dirs)
 
     # print(md_objects)
