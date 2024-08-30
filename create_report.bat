@@ -1,6 +1,6 @@
 .venv\Scripts\python.exe mdcrawler.py^
- -i "C:\\Daten\Dokumente\\workcopies_mafi\\flux_sim"^
- -i "C:\\Daten\Dokumente\\workcopies_mafi\\DareDevel"^
+ -i "C:\\Daten\Dokumente\\workcopies_mafi\\Produktlinien"^
+ -i "C:\\Data\gitlab\inhouse"^
  -x ".venv"^
  -x "mistletoe"^
  -x "kiwi"^
