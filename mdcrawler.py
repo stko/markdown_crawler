@@ -169,12 +169,15 @@ class Crawler:
                     subdirs.remove(excluded_dir)
                 for filename in files:
                     file_path = os.path.join(root, filename)
-                    if filename[-3:] == '.md':
-                        self.print(f'actual md File: {file_path}')
-                        md_objects[file_path] = self.import_file(file_path)
-                    if filename[-3:] == '.jd':
-                        self.print(f'actual jd File: {file_path}')
-                        md_objects[file_path] = self.import_json_file(file_path)
+                    try:
+                        if filename[-3:] == '.md':
+                            self.print(f'actual md File: {file_path}')
+                            md_objects[file_path] = self.import_file(file_path)
+                        if filename[-3:] == '.jd':
+                            self.print(f'actual jd File: {file_path}')
+                            md_objects[file_path] = self.import_json_file(file_path)
+                    except Exception as ex:
+                        self.print(f'Error: MDCrawler Couldn\'t process {file_path}: {str(ex)}')
         self.remove_scrap(md_objects)
         self.collect_objs_by_name(md_objects)
         self.copy_parents()
